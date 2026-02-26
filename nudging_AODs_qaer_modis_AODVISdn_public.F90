@@ -439,7 +439,7 @@ module nudging_AODs
       
 !   real(r8),allocatable:: dopaer(:,:,:,:)  !(pcols,pver,nmde,begchunk:endchunk) --- adding #mode
 !   real(r8),allocatable:: tauxar(:,:,:)      ! pcols,pver,begchunk:endchunk
-  ! real(r8),allocatable:: AODVISdn_computed(:,:)      ! pcols,begchunk:endchunk  
+  real(r8),allocatable:: AODVISdn_computed(:,:)      ! pcols,begchunk:endchunk  
   real(r8),allocatable:: AOD_ratio(:,:)   !pcols,begchunk:endchunk ratio between MODIS_AOD/AODVISdn_computed
    
    ! ----------------------------------> aerosol advected constituents
@@ -937,8 +937,8 @@ contains
 !    call alloc_err(istat,'nudging_init_AOD','tauxar',pcols*(pver+1)*((endchunk-begchunk)+1))
 
    ! --- Allocate space for AODVISdn_computed -------------------------------
-  !  allocate(AODVISdn_computed(pcols,begchunk:endchunk),stat=istat)
-  !  call alloc_err(istat,'nudging_init_AOD','AODVISdn_computed',pcols*((endchunk-begchunk)+1))
+   allocate(AODVISdn_computed(pcols,begchunk:endchunk),stat=istat)
+   call alloc_err(istat,'nudging_init_AOD','AODVISdn_computed',pcols*((endchunk-begchunk)+1))
    
    ! --- Allocate space for AOD nudging scale factor -------------------------------
    allocate(AOD_ratio(pcols,begchunk:endchunk),stat=istat)
@@ -1057,7 +1057,7 @@ contains
 !    call addfld ('palb',   horiz_only, 'A','  ','Parameterized single scattering albedo',  flag_xyfill=.true.,fill_value=-999.0_r8)
   !  call addfld ('tauxar',(/ 'lev '/),'A',' '  ,'Layer extinction optical depth  ', flag_xyfill=.true.,fill_value=-999.0_r8)   
 !    call addfld ('dopaer',   (/ 'lev ', 'nmde'/), 'A','  ','Aerosol optical depth in layer',  flag_xyfill=.true.,fill_value=-999.0_r8) 
-  !  call addfld ('AODVISdn_computed',   horiz_only, 'A','  ','Computed AOD',  flag_xyfill=.true.,fill_value=-999.0_r8)                 
+   call addfld ('AODVISdn_computed',   horiz_only, 'A','  ','AODVISdn computed',  flag_xyfill=.true.,fill_value=-999.0_r8)                 
    call addfld ('AOD_ratio',   horiz_only, 'A','  ','Nudging scale factor MODIS~VIIRS/Computed',  flag_xyfill=.true.,fill_value=-999.0_r8)                    
 !    write(iulog,*), '|~~~~~~~~~~~~ nudging_AODs.F90 ~~~~~~~~~ > call addfld(AOD_ratio)'
 
@@ -2195,7 +2195,7 @@ contains
 !       call outfld('palb',          palb(:,lchnk),    pcols, lchnk)           
       
       ! call outfld('dopaer',        dopaer(:,:,:,lchnk),    pcols, lchnk)      
-      ! call outfld('AODVISdn_computed',  AODVISdn_computed(:,lchnk),    pcols, lchnk)            
+      call outfld('AODVISdn_computed',  AODVISdn_computed(:,lchnk),    pcols, lchnk)            
       call outfld('AOD_ratio',     AOD_ratio(:,lchnk),    pcols, lchnk)       
 
    endif

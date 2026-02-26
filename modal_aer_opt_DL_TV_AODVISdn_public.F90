@@ -1183,7 +1183,7 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, &
    call outfld('ABSORBdn'//diag(list_idx),   absorb,  pcols, lchnk)
    call outfld('QAERWATdn'//diag(list_idx),  qaerwat_tot, pcols, lchnk)   ! dmleung 17 Nov 2023
    call outfld('AODVISdn'//diag(list_idx),   aodvis,  pcols, lchnk)
-   ! call outfld('AODVISdn'//diag(list_idx),   AODVISdn,  pcols, lchnk)
+
    call outfld('AODVISdn_computed'//diag(list_idx),   AODVISdn_computed,  pcols, lchnk)   
 
    call outfld('AODABSdn'//diag(list_idx),   aodabs,  pcols, lchnk)
@@ -1195,8 +1195,6 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, &
       extinctdust(idxnite(i),:) = fillvalue    ! dmleung 17 Nov 2023
       absorb(idxnite(i),:)  = fillvalue
       aodvis(idxnite(i))    = fillvalue
-      ! AODVISdn(idxnite(i))    = fillvalue
-      ! AODVISdn(idxnite(i))    = fillvalue      
       AODVISdn_computed(idxnite(i))    = fillvalue      
       aodvisst(idxnite(i))  = fillvalue
       asymext(idxnite(i),:) = fillvalue
@@ -1205,7 +1203,7 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, &
    call outfld('EXTINCT'//diag(list_idx),  extinct, pcols, lchnk)
    call outfld('EXTINCTDUST'//diag(list_idx), extinctdust, pcols, lchnk)   ! dmleung 17 Nov 2023
    call outfld('ABSORB'//diag(list_idx),   absorb,  pcols, lchnk)
-   ! call outfld('AODVIS'//diag(list_idx),   aodvis,  pcols, lchnk)
+   call outfld('AODVIS'//diag(list_idx),   aodvis,  pcols, lchnk)
    call outfld('AODABS'//diag(list_idx),   aodabs,  pcols, lchnk)
    call outfld('AODVISst'//diag(list_idx), aodvisst,pcols, lchnk)
    call outfld('EXTxASYM'//diag(list_idx), asymext, pcols, lchnk)
@@ -1218,12 +1216,6 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, &
          else
             ssavis(i) = 0.925_r8
          endif
-
-         ! if (AODVISdn(i) > 1.e-10_r8) then
-         !    ssavis(i) = ssavis(i)/AODVISdn(i)  ! Changed from aodvis
-         ! else
-         !    ssavis(i) = 0.925_r8
-         ! endif
       end do
       
       call outfld('SSAVISdn',        ssavis,        pcols, lchnk)
