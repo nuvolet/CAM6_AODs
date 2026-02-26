@@ -2687,39 +2687,37 @@ contains
   !================================================================
   subroutine qaer_target_mam4(lchnk,ncol)  
 
-	! Adjusts MAM4 aerosol mass mixing ratios by scaling with AOD ratio (Target/Computed). 
+	! Adjusts MAM4 aerosol mass mixing ratios by scaling with AOD ratio (Target/AODVISdn_computed). 
 	! Computes scaling factor from satellite-observed vs. model-calculated AOD, then applies 
 	! uniform scaling to all aerosol species and vertical levels to match target AOD values 
 	! for data assimilation or model constraint purposes.
 
    use ppgrid       ,only: pver
    use modal_aer_opt, only: get_aodvisdn  
+
    integer, intent(in)           :: ncol,lchnk 
    
    integer :: l, kcol
    integer, parameter :: nmde = 4
-   
-   real(r8) :: AODVISdn_computed(ncol)
-   
-  
+   real(r8) :: AODVISdn_computed(ncol,lchnk)
+     
    call get_aodvisdn(AODVISdn_computed,  ncol, lchnk)
       
-      ! Compute the ratio between MODIS AOD and computed from RTM
-      
-      do kcol =1,ncol
-      	  if 	((AODVISdn_computed(kcol) .le. 0.01) .or. (Target_AOD(kcol,lchnk) .lt. 0)) then          	  
-      	  		AOD_ratio(kcol,lchnk) = 1
-
-      	  else      	  	
-	      		AOD_ratio(kcol,lchnk) = Target_AOD(kcol,lchnk)/AODVISdn_computed(kcol)
-	      end if   		
-      end do
-      
-      do kcol = 1,ncol       
-         do l = 1, naer
-            Target_Qaer(kcol,:pver,l,lchnk)=AOD_ratio(kcol,lchnk)*Model_Qaer(kcol,:pver,l,lchnk)         
-         end do
-      end do
+  ! Compute the ratio between MODIS AOD and computed from RTM
+    
+    do kcol =1,ncol
+        if 	((AODVISdn_computed(kcol,lchnk) .le. 0.01) .or. (Target_AOD(kcol,lchnk) .lt. 0)) then          	  
+          AOD_ratio(kcol,lchnk) = 1
+        else      	  	
+          AOD_ratio(kcol,lchnk) = Target_AOD(kcol,lchnk)/AODVISdn_computed(kcol,lchnk)
+        end if   		
+    end do
+    
+    do kcol = 1,ncol       
+        do l = 1, naer
+          Target_Qaer(kcol,:pver,l,lchnk)=AOD_ratio(kcol,lchnk)*Model_Qaer(kcol,:pver,l,lchnk)         
+        end do
+    end do
    
    return
   end subroutine ! qaer_target_mam4
